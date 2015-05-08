@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="och.comp.db.main.mapper.ChatMapper">
+
+
+    <resultMap id="ownerChatInfoMap" type="och.api.model.chat.account.ChatAccount">
+        <result column="id" property="id"/>
+        <result column="uid" property="uid"/>
+        <result column="serverId" property="serverId"/>
+        <association property="server" javaType="och.api.model.server.ServerRow">
+        	<result column="serverId" property="id"/>
+            <result column="server_httpUrl" property="httpUrl"/>
+            <result column="server_httpsUrl" property="httpsUrl"/>
+        </association>
+    </resultMap>
+    
+
+	<select id="getOwnerAccs" parameterType="map" resultType="java.lang.String">
+		SELECT DISTINCT acc.uid 
+		FROM chat_accounts acc 
+			LEFT JOIN chat_account_privileges priv 
+			ON acc.id = priv.accId
+		WHERE 
+			priv.userId = #{ownerId}
+			AND
+			(priv.chatPrivileges = '0' 
+				OR priv.chatPrivileges LIKE '0,%'
+				OR priv.chatPrivileges LIKE '%,0')
+	</select>
+	
+	
+	
+	<select id="getOwnerAccsInfo" parameterType="map" resultMap="ownerChatInfoMap">
+		SELECT DISTINCT 
+			acc.id as id,
+			acc.uid as uid,
+			acc.serverId as serverId,
+			server.httpUrl as server_httpUrl,
+			server.httpsUrl as server_httpsUrl
+		FROM chat_accounts acc 
+			LEFT JOIN chat_account_privileges priv ON acc.id = priv.accId
+			LEFT JOIN servers server ON acc.serverId = server.id
+		WHERE 
+			priv.userId = #{ownerId}
+			AND
+			(priv.chatPrivileges = '0' 
+				OR priv.chatPrivileges LIKE '0,%'
+				OR priv.chatPrivileges LIKE '%,0')
+	</select>
+	
+	
+	
+	<update id="updateOwnersAccsLastPay" parameterType="map">
+		UPDATE chat_accounts
+		SET tariffLastPay=#{tariffLastPay}
+		WHERE id IN (
+			SELECT DISTINCT acc.id 
+			FROM chat_accounts acc 
+				LEFT JOIN chat_account_privileges priv 
+				ON acc.id = priv.accId
+			WHERE 
+				priv.userId = #{ownerId}
+				AND
+				(priv.chatPrivileges = '0' 
+					OR priv.chatPrivileges LIKE '0,%'
+					OR priv.chatPrivileges LIKE '%,0')
+				AND acc.tariffLastPay &lt; #{tariffLastPay}
+		)
+	</update>
+	
+
+</mapper>

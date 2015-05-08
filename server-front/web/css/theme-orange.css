@@ -1,0 +1,18 @@
+
+.oChat-startPanel {
+    border: 2px solid #CC7A00;
+}
+
+.oChat-root {
+	border: 2px solid #CC7A00;
+}
+
+.oChat-container a {
+	color: #CC6500;
+}
+
+.oChat-container a:hover,
+.oChat-container a:focus {
+    color: #924900;
+}
+

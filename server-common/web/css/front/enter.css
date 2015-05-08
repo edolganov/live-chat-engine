@@ -1,0 +1,12 @@
+
+
+.loginWrapper{
+	width: 600px;
+	/*margin: 30px auto;*/
+	min-height: 600px;
+	margin-top: 15px;
+}
+
+.infoMsg {
+	margin-top: 10px;
+}

@@ -1,0 +1,1 @@
+Your payment has been confirmed - Live Chat

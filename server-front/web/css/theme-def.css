@@ -1,0 +1,26 @@
+
+
+.oChat-startPanel {
+    border: 2px solid #0088cc;
+}
+
+.oChat-root {
+	border: 2px solid #0088cc;
+}
+
+.oChat-container a {
+	color: #0088cc;
+}
+
+.oChat-container a:hover,
+.oChat-container a:focus {
+    color: #005580;
+}
+
+.oChat-container textarea:focus,
+.oChat-container input[type="text"]:focus {
+  border-color: rgba(82, 168, 236, 0.8);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+}

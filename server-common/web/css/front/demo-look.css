@@ -1,0 +1,33 @@
+
+#selectSiteBlockWrapper {
+	position: fixed;
+	height: 30px;
+	top: 0px;
+	left: 0px;
+	z-index: 10;
+	width: 100%;
+}
+
+#selectSiteBlock {
+	border: 2px solid #0088cc;
+	border-radius: 5px;
+    padding: 8px;
+	background-color: rgba(255, 255, 255, 0.8);
+	margin: 0 auto;
+	max-width: 1024px;
+	margin-top: -5px;
+}
+
+#selectSite {
+    margin: 0;
+    height: 30px;
+    width: 250px;
+}
+
+#siteFrame {
+	height: 100%;
+	width: 100%;
+	position: absolute;
+    top: 0;
+    bottom: 0;
+}

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+         
+         
+    <filter>
+    	<filter-name>AutoCreateUserSessionFilter</filter-name>
+    	<filter-class>och.chat.web.filter.AutoCreateUserSessionFilter</filter-class>
+    </filter>
+    <filter-mapping>
+    	<filter-name>AutoCreateUserSessionFilter</filter-name>
+    	<url-pattern>/system-api/chat/*</url-pattern>
+    	<dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    
+    
+    <filter>
+    	<filter-name>UserSecurityFilter</filter-name>
+    	<filter-class>och.chat.web.filter.UserSecurityFilter</filter-class>
+    </filter>
+    <filter-mapping>
+    	<filter-name>UserSecurityFilter</filter-name>
+    	<url-pattern>/system-api/chat/*</url-pattern>
+    	<dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    
+    <filter>
+    	<filter-name>BaseSaveReqInfoFilter</filter-name>
+    	<filter-class>och.comp.web.log.BaseSaveReqInfoFilter</filter-class>
+    </filter>
+    <filter-mapping>
+    	<filter-name>BaseSaveReqInfoFilter</filter-name>
+    	<url-pattern>/remote/*</url-pattern>
+    	<url-pattern>/api/*</url-pattern>
+    	<url-pattern>/system-api/*</url-pattern>
+    	<dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    
+    <welcome-file-list>
+		<welcome-file>index</welcome-file>
+	</welcome-file-list>
+	
+	<error-page>
+	    <location>/errors</location>
+	</error-page>
+    
+    
+</web-app>

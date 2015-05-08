@@ -1,0 +1,132 @@
+
+<div style="display: none;">
+
+	<div id="oChatStartPanel" class="oChat-startPanel oChat-container">
+		<a href="javascript:" 
+		   i18n="start.Text"
+		   class="oChat-startPanel-text oChat-pseudo">Ask a question</a>
+	</div>
+
+	<div id="oChatRoot" class="oChat-root oChat-container">
+
+		<div bind="hide" class="oChat-hide"
+			 title-i18n="app.Close"
+			 title="Close">&times;</div>
+
+		<div bind="startConnectMsg" class="oChat-stateMsg"
+			 i18n="app.ConnectingToServer"
+			 style="display: none;">Connecting to server...</div>
+
+		<div bind="connectError" class="oChat-stateMsg" style="display: none;">
+			<span bind="connectErrorCommonText" i18n="app.ConnectError">Connect error</span>
+			<span bind="connectErrorCustomText"></span>
+			<p>
+			<span bind="connectAgain" class="oChat-pseudo"
+				  i18n="app.TryConnectAgain">Try again</span>
+		</div>
+
+		<div bind="feedback" class="oChat-feedback" style="display: none;">
+
+			<div bind="feedbackForm">
+				<div i18n="app.feedback.Title" class="oChat-feedback-title">All operators is offline now.\nPlease, leave the message.</div>
+
+				<input bind="feedbackName"
+					   name="feedbackName"
+					   class="oChat-feedbackName"
+					   type="text"
+					   placeholder-i18n="app.feedback.Name"
+					   placeholder="Your name"/>
+
+				<input bind="feedbackEmail"
+					   name="feedbackEmail"
+					   class="oChat-feedbackEmail"
+					   type="text"
+					   placeholder-i18n="app.feedback.Email"
+					   placeholder="Your email"/>
+
+				<textarea bind="feedbackText"
+						  class="oChat-feedbackText"
+						  autocomplete="off"
+						  cols="30"
+						  rows="5"
+						  placeholder-i18n="app.feedback.Text"
+						  placeholder="Text"
+						  ></textarea>
+
+				<div bind="feedBackEmptyMsg" class="oChat-alert" i18n="app.feedback.EmptyDataMsg"
+					 style="display: none;">Please enter your email and text</div>
+
+				<button bind="feedbackSend" 
+						class="oChat-btn oChat-feedbackSend"
+						i18n="app.Send">Send</button>
+				
+				<div class="oChat-clear"></div>
+			</div>
+			<div bind="feedbackDone" class="oChat-feedbackDone oChat-alert oChat-alert-success"
+				 style="display: none;"><span i18n="app.feedback.DoneTitle"
+					 >Message was sended!
+We will answer you by email.</span>
+<a href="javascript:" i18n="app.Close" onclick="window.oChat.hide();">Close</a>
+</div>
+		</div>
+
+		<div bind="content" class="oChat-content" style="display: none;">
+			 <div bind="chatLog" class="oChat-log">
+				 <div class="oChat-welcomeToChat"
+					  i18n="app.chat.Welcome">Welcome to the chat!
+Leave your message!</div>
+			 </div>
+			<div class="oChat-addBlock">
+				<textarea 
+					bind="msgText"
+					class="oChat-msgText"
+					autocomplete="off" cols="30" rows="5"
+					placeholder-i18n="app.chat.Text"
+					placeholder="Text and press Send button or&nbsp;&lt;Ctrl>&nbsp;+&nbsp;&lt;Enter>"></textarea>
+				<button
+					bind="send"
+					class="oChat-btn oChat-msgSend"
+					i18n="app.Send">Send</button>
+				<div class="oChat-clear"></div>
+			</div>
+		</div>
+
+		<div bind="sendLoading" class="oChat-sendLoading"
+			 i18n="app.SendLoading"
+			 style="display: none;">Sending...</div>
+
+		<div bind="sendError" class="oChat-sendError" style="display: none;">
+			<span bind="sendErrorCommon" i18n="app.SendError" class="oChat-errorText oChat-sendErrorMsg">Send error</span>
+			<span bind="sendErrorNoOperators" class="oChat-errorText oChat-sendErrorMsg" style="display: none;">
+				<span i18n="app.SendError.NoOperators">No operators</span>
+				<a class="oChat-pseudo reinitLink" href="javascript:"
+				   i18n="app.SendFeedback">Send Feedback</a>
+			</span>
+		</div>
+
+		<div class="oChat-footer">
+			Powered by
+			<a href="https://github.com/edolganov/live-chat-engine" target="_blank">Live Chat</a>
+		</div>
+
+	</div>
+
+
+	<div id="oChatUserMsg-template" class="oChat-msg oChat-userMsg">
+		<div class="oChat-user">
+			<span bind="nick" i18n="app.chat.You">You</span>
+			<span bind="time"></span>
+		</div>
+		<div bind="content" class="oChat-msgContent"></div>
+	</div>
+
+	<div id="oChatOperatorMsg-template" class="oChat-msg oChat-operatorMsg">
+		<div class="oChat-user">
+			<span bind="nick" i18n="app.chat.Operator">Operator</span>
+			<span bind="time"></span>
+		</div>
+		<div bind="content" class="oChat-msgContent"></div>
+	</div>
+
+
+</div>

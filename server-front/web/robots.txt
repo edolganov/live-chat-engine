@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /css/
+Disallow: /js/
+Disallow: /js-comp/
+Disallow: /css-comp/
+Disallow: /chat/
+Host: cheapchat.me

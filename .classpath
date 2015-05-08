@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="common/util/src"/>
+	<classpathentry kind="src" path="common/util/test-src"/>
+	<classpathentry kind="src" path="common/api/src"/>
+	<classpathentry kind="src" path="common/api/test-src"/>
+	<classpathentry kind="src" path="common/services/src"/>
+	<classpathentry kind="src" path="common/services/test-src"/>
+	<classpathentry kind="src" path="components/web/src"/>
+	<classpathentry kind="src" path="components/mail/src"/>
+	<classpathentry kind="src" path="components/mail/test-src"/>
+	<classpathentry kind="src" path="components/captcha/src"/>
+	<classpathentry kind="src" path="components/templates/src"/>
+	<classpathentry kind="src" path="components/templates/test-src"/>
+	<classpathentry kind="src" path="components/cache-remote/src"/>
+	<classpathentry kind="src" path="components/cache-remote/test-src"/>
+	<classpathentry kind="src" path="components/chats/src"/>
+	<classpathentry kind="src" path="components/chats/test-src"/>
+	<classpathentry kind="src" path="components/db-common/src"/>
+	<classpathentry kind="src" path="components/db-common/test-src"/>
+	<classpathentry kind="src" path="components/db-main/src"/>
+	<classpathentry kind="src" path="components/ops-common/src"/>
+	<classpathentry kind="src" path="components/ops-common/test-src"/>
+	<classpathentry kind="src" path="components/2checkout/src"/>
+	<classpathentry kind="src" path="components/paypal/src"/>
+	<classpathentry kind="src" path="components/paypal/test-src"/>
+	<classpathentry kind="src" path="components/billing/src"/>
+	<classpathentry kind="src" path="server-chat/src"/>
+	<classpathentry kind="src" path="server-chat/test-src"/>
+	<classpathentry kind="src" path="server-front/src"/>
+	<classpathentry kind="src" path="server-front/test-src"/>
+	<classpathentry kind="src" path="integration/test-src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="thirdparty/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="thirdparty/gson-2.2.4.jar" sourcepath="thirdparty-sources/gson-2.2.4-sources.jar"/>
+	<classpathentry kind="lib" path="thirdparty/javax.servlet-api-3.0.1.jar" sourcepath="thirdparty-sources/javax.servlet-api-3.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="thirdparty/commons-pool-1.6.jar"/>
+	<classpathentry kind="lib" path="thirdparty/postgresql-9.2-1003.jdbc4.jar" sourcepath="thirdparty-sources/postgresql-jdbc-9.2-1003-sources.jar"/>
+	<classpathentry kind="lib" path="thirdparty/mybatis-3.2.2.jar" sourcepath="thirdparty-sources/mybatis-3.2.2-sources.jar"/>
+	<classpathentry kind="lib" path="thirdparty/mail-1.5.0-b01.jar" sourcepath="thirdparty-sources/mail-1.5.0-b01-sources.jar"/>
+	<classpathentry kind="lib" path="thirdparty/freemarker.jar" sourcepath="thirdparty-sources/freemarker-sources.jar"/>
+	<classpathentry kind="lib" path="thirdparty/jstl-1.2.jar" sourcepath="thirdparty-sources/jstl-1.2-sources.jar"/>
+	<classpathentry kind="lib" path="thirdparty/h2-1.4.177.jar"/>
+	<classpathentry kind="lib" path="thirdparty/jetty-all-9.0.4.v20130625.jar" sourcepath="C:/Users/Evgeny/.m2/repository/org/eclipse/jetty/aggregate/jetty-all/9.0.4.v20130625/jetty-all-9.0.4.v20130625-sources.jar"/>
+	<classpathentry kind="lib" path="thirdparty/paypal-core-1.5.0.jar" sourcepath="thirdparty-sources/paypal-core-1.5.0-sources.jar"/>
+	<classpathentry kind="lib" path="thirdparty/paypal-merchant-2.10.116.jar" sourcepath="thirdparty-sources/paypal-merchant-2.10.116-sources.jar"/>
+	<classpathentry kind="lib" path="thirdparty/paypal-permissions-2.4.109.jar" sourcepath="thirdparty-sources/paypal-permissions-2.4.109-sources.jar"/>
+	<classpathentry kind="lib" path="thirdparty/paypal-rest-0.9.1.jar" sourcepath="thirdparty-sources/paypal-rest-0.9.1-sources.jar"/>
+	<classpathentry kind="lib" path="thirdparty/maxmind-geo-ip-1.2.14.jar" sourcepath="thirdparty-sources/maxmind-geo-ip-1.2.14-sources.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

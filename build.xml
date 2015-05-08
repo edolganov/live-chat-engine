@@ -1,0 +1,780 @@
+﻿<project name="Live chat build" default="build-server-DEV" basedir=".">
+
+	<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="thirdparty/ant-contrib.jar"/>
+	<taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask" classpath="thirdparty/js-compiler/compiler.jar"/>
+
+    <target name="init">
+	
+		<property file="build-conf/build.properties"/>
+		
+        <path id="thirdparty">
+            <fileset dir="thirdparty"/>
+        </path>
+		
+		<tstamp>
+		  <format property="NOW" pattern="yyyy-MM-dd-HH:mm:ss" locale="ru"/>
+		</tstamp>
+		
+		<property name="buildVersion" value="b-${NOW}"/>
+		<echo message="buildVersion=${buildVersion}" />	
+		
+		
+		
+    </target>
+	<target name="init-DEV">
+		<property file="build-conf/build-dev.properties"/>
+	</target>
+	<target name="init-PROD">
+		<property file="build-conf/build-prod.properties"/>
+	</target>
+
+	
+    <target name="clean-classes">
+        <delete dir="build/classes"/>
+    </target>
+	
+	<target name="compile-classes">
+        
+		<mkdir dir="build/classes"/>
+		
+        <javac
+			   destdir="build/classes"
+               debug="${compiler.debug}"
+               optimize="${compiler.optimize}"
+               deprecation="${compiler.deprecation}"
+			   target="${compiler.target}"
+               encoding="${compiler.encoding}">
+			   
+			<src path="common/util/src"/>
+			<src path="common/api/src"/>
+			<src path="common/services/src"/>
+			<src path="components/web/src"/>
+			<src path="components/chats/src"/>
+			<src path="components/db-common/src"/>
+			<src path="components/db-main/src"/>
+			<src path="components/cache-remote/src"/>
+			<src path="components/mail/src"/>
+			<src path="components/captcha/src"/>
+			<src path="components/templates/src"/>
+			<src path="components/paypal/src"/>
+			<src path="components/2checkout/src"/>
+			<src path="components/billing/src"/>
+			<src path="components/ops-common/src"/>
+			
+			<!--<src path="components//src"/>-->
+			<src path="server-chat/src"/>
+			<src path="server-front/src"/>
+			
+            <classpath refid="thirdparty"/>
+        </javac>
+		
+    </target>
+	
+	
+<!--
+********************************************************************************************************
+********************************************************************************************************
+********************************************************************************************************
+********************************************************************************************************
+-->
+<!-- CHAT SERVER -->
+
+	<target name="build-server-chat-initFiles">
+	
+		<delete dir="build/server-chat"/>
+		<delete file="build/server-chat.war"/>
+		<mkdir dir="build/server-chat"/>
+		
+		<!-- copy libs -->
+		<copy todir="build/server-chat/WEB-INF/lib">
+			<fileset file="thirdparty/commons-logging-1.1.1.jar"/>
+			<fileset file="thirdparty/gson-2.2.4.jar"/>
+			<fileset file="thirdparty/postgresql-9.2-1003.jdbc4.jar"/>
+			<fileset file="thirdparty/h2-1.4.177.jar"/>
+			<fileset file="thirdparty/freemarker.jar"/>
+			<fileset file="thirdparty/mail-1.5.0-b01.jar"/>
+			<fileset file="thirdparty/mybatis-3.2.2.jar"/>
+			<fileset file="thirdparty/jstl-1.2.jar"/>
+			<fileset file="thirdparty/maxmind-geo-ip-1.2.14.jar"/>
+			
+			<!--<fileset file="thirdparty/"/>-->
+        </copy>
+		<mkdir dir="build/server-chat/WEB-INF/js-compiler"/>
+		<copy todir="build/server-chat/WEB-INF/js-compiler">
+			<fileset file="thirdparty/js-compiler/compiler.jar"/>
+		</copy>
+		
+		<mkdir dir="build/server-chat/WEB-INF/geo-ip"/>
+		<copy todir="build/server-chat/WEB-INF/geo-ip">
+			<fileset file="components/geo-ip/extra/GeoIP-db.zip"/>
+		</copy>
+		
+		<!-- copy resourses -->
+		<copy todir="build/server-chat/WEB-INF/classes">
+			<fileset dir="common/util/src" excludes="**/*.java"/>
+			<fileset dir="common/api/src" excludes="**/*.java"/>
+			<fileset dir="common/services/src" excludes="**/*.java"/>
+			<fileset dir="components/web/src" excludes="**/*.java"/>
+			<fileset dir="components/chats/src" excludes="**/*.java"/>
+			
+			<!--<fileset dir="components//src" excludes="**/*.java"/>-->
+			<fileset dir="server-chat/src" excludes="**/*.java"/>
+		</copy>
+		
+		<!-- copy classes -->
+        <copy todir="build/server-chat/WEB-INF/classes/">
+            <fileset dir="build/classes/" includes="
+				och/util/**/*,
+				och/api/**/*,
+				och/service/**/*,
+				och/comp/web/**/*,
+				och/comp/cache/**/*,
+				och/comp/mail/**/*,
+				och/comp/template/**/*,
+				och/comp/chats/**/*,
+				och/comp/ops/**/*,
+				och/chat/**/*
+			"/>
+        </copy>
+
+	</target>
+	
+	<target name="build-server-chat-initProvider">
+	
+		<!-- copy web -->
+		<delete dir="build/server-chat/css"/>
+		<delete dir="build/server-chat/js"/>
+		<delete dir="build/server-chat/WEB-INF/tags"/>
+		<delete dir="build/server-chat/WEB-INF/jsp"/>
+		<copy todir="build/server-chat/css">
+			<fileset dir="server-common/web/css"/>
+		</copy>
+		<copy todir="build/server-chat/i">
+			<fileset dir="server-common/web/i"/>
+		</copy>
+		<copy todir="build/server-chat/js">
+			<fileset dir="server-common/web/js"/>
+		</copy>
+		<copy todir="build/server-chat/WEB-INF/tags">
+			<fileset dir="server-common/web/WEB-INF/tags"/>
+		</copy>
+		<copy todir="build/server-chat/WEB-INF/jsp/chat">
+			<fileset dir="server-common/web/WEB-INF/jsp/chat"/>
+		</copy>
+		<copy todir="build/server-chat/WEB-INF/jsp/error">
+			<fileset dir="server-common/web/WEB-INF/jsp/error"/>
+		</copy>
+		<copy todir="build/server-chat">
+			<fileset dir="server-chat/web"/>
+		</copy>
+		
+		<echo message="Creating chat/provider.html..." />
+		
+		<!-- provider.js -->
+		<delete file="build/server-chat/chat/provider.js"/>
+
+		<loadfile property="chatProviderIncludes" encoding="UTF-8" srcfile="server-chat/web/js/provider-dev/include.txt"/>
+		<for param="jsFile" list="${chatProviderIncludes}" delimiter="${line.separator}">
+			<sequential>
+				<propertyregex 
+					property="cleanedJsFile"
+					input="@{jsFile}"
+					regexp="${front.app.compile.includeStamp}"
+					replace=""
+					override="true"
+					global="true"
+					defaultValue="@{jsFile}"/>
+					
+				<if>
+					<contains string="${cleanedJsFile}" substring="#" />
+					<then>
+						<echo message="Skip: ${cleanedJsFile}" />
+					</then>
+					<else>
+						<echo message="Add: ${cleanedJsFile}" />
+						<var name="filePath" value="server-chat/web/js/provider-dev/${cleanedJsFile}"/>
+						<var name="curJsFile" unset="true"/>
+						<loadfile property="curJsFile" encoding="UTF-8" srcfile="${filePath}"/>
+						<concat destfile="build/server-chat/chat/provider.js" 
+							outputencoding="UTF-8" 
+							encoding="UTF-8" 
+							append="true">${curJsFile}</concat>
+					</else>
+				</if>
+			</sequential>
+		</for>
+		
+		<!-- compress -->
+		<if>
+			<equals arg1="${front.app.compile.compress}" arg2="true" />
+			<then>
+				<echo message="compress provider.js..." />
+				<jscomp 
+					encoding="UTF-8"
+					compilationLevel="simple" 
+					warning="quiet" 
+					debug="false" 
+					output="build/server-chat/chat/provider.min.js">
+					<sources dir="build/server-chat/chat">
+						<file name="provider.js"/>
+					</sources>
+				</jscomp>
+				<delete file="build/server-chat/chat/provider.js"/>
+				<rename src="build/server-chat/chat/provider.min.js" dest="build/server-chat/chat/provider.js"/>
+			</then>
+		</if>
+		
+		
+		<!-- provider.html -->
+		<delete file="build/server-chat/chat/provider.html"/>
+		<concat destfile="build/server-chat/chat/provider.html" 
+			outputencoding="UTF-8" 
+			encoding="UTF-8" 
+			append="false">
+			<fileset file="server-common/web/scriptPageBegin.txt"/>
+		</concat>
+		
+		<concat destfile="build/server-chat/chat/provider.html" 
+			outputencoding="UTF-8" 
+			encoding="UTF-8" 
+			append="true">/*! oChat provider v1.0 */</concat>
+			
+		<concat destfile="build/server-chat/chat/provider.html" 
+			outputencoding="UTF-8" 
+			encoding="UTF-8" 
+			append="true">
+			<fileset file="build/server-chat/chat/provider.js"/>
+			<fileset file="server-common/web/scriptPageEnd.txt"/>
+		</concat>
+		
+		<!-- clean trash -->
+		<delete file="build/server-chat/chat/provider.js"/>
+		
+	</target>
+	
+	
+	<target name="build-server-chat" depends="
+		build-server-chat-initFiles,
+		build-server-chat-initProvider">
+		
+	</target>
+	
+	<target name="clean-server-chat-from-dev">
+		<delete dir="build/server-chat/WEB-INF/classes/och/chat/web/servlet/devtest"/>
+	</target>
+	
+	<target name="war-server-chat">
+	
+		<echo file="build/server-chat/build.txt" message="${buildVersion}"/>
+	
+		<jar jarfile="build/server-chat.war">
+            <fileset dir="build/server-chat"/>
+        </jar>
+		
+	</target>
+	
+	
+	
+	
+<!--
+********************************************************************************************************
+********************************************************************************************************
+********************************************************************************************************
+********************************************************************************************************
+-->
+<!-- FRONT SERVER -->
+	
+	
+	<target name="build-server-front-initFiles">
+	
+		<delete dir="build/server-front"/>
+		<delete file="build/server-front.war"/>
+		<mkdir dir="build/server-front"/>
+		
+		
+		<!-- copy libs -->
+		<copy todir="build/server-front/WEB-INF/lib">
+			<fileset file="thirdparty/commons-logging-1.1.1.jar"/>
+			<fileset file="thirdparty/gson-2.2.4.jar"/>
+			<fileset file="thirdparty/postgresql-9.2-1003.jdbc4.jar"/>
+			<fileset file="thirdparty/h2-1.4.177.jar"/>
+			<fileset file="thirdparty/freemarker.jar"/>
+			<fileset file="thirdparty/mail-1.5.0-b01.jar"/>
+			<fileset file="thirdparty/mybatis-3.2.2.jar"/>
+			<fileset file="thirdparty/jstl-1.2.jar"/>
+			<fileset file="thirdparty/paypal-core-1.5.0.jar"/>
+			<fileset file="thirdparty/paypal-permissions-2.4.109.jar"/>
+			<fileset file="thirdparty/paypal-merchant-2.10.116.jar"/>
+			<fileset file="thirdparty/maxmind-geo-ip-1.2.14.jar"/>
+			<!--<fileset file="thirdparty/"/>-->
+        </copy>
+		<mkdir dir="build/server-front/WEB-INF/js-compiler"/>
+		<copy todir="build/server-front/WEB-INF/js-compiler">
+			<fileset file="thirdparty/js-compiler/compiler.jar"/>
+		</copy>
+		
+		<mkdir dir="build/server-front/WEB-INF/geo-ip"/>
+		<copy todir="build/server-front/WEB-INF/geo-ip">
+			<fileset file="components/geo-ip/extra/GeoIP-db.zip"/>
+		</copy>
+		
+		<!-- copy resourses -->
+		<copy todir="build/server-front/WEB-INF/classes">
+			<fileset dir="common/util/src" excludes="**/*.java"/>
+			<fileset dir="common/api/src" excludes="**/*.java"/>
+			<fileset dir="common/services/src" excludes="**/*.java"/>
+			<fileset dir="components/web/src" excludes="**/*.java"/>
+			<fileset dir="components/db-common/src" excludes="**/*.java"/>
+			<fileset dir="components/db-main/src" excludes="**/*.java"/>
+			
+			<!--<fileset dir="components//src" excludes="**/*.java"/>-->
+			<fileset dir="server-front/src" excludes="**/*.java"/>
+		</copy>
+		
+		<!-- copy classes -->
+        <copy todir="build/server-front/WEB-INF/classes/">
+            <fileset dir="build/classes/" includes="
+				och/util/**/*,
+				och/api/**/*,
+				och/service/**/*,
+				och/comp/web/**/*,
+				och/comp/db/base/**/*,
+				och/comp/db/main/**/*,
+				och/comp/cache/**/*,
+				och/comp/captcha/**/*,
+				och/comp/mail/**/*,
+				och/comp/template/**/*,
+				och/comp/paypal/**/*,
+				och/comp/tocheckout/**/*,
+				och/comp/email_ads/**/*,
+				och/comp/ops/**/*,
+				och/front/**/*
+			"/>
+        </copy>
+	</target>
+	
+	<target name="build-server-front-initApp">
+	
+		<!-- copy web -->
+		<delete dir="build/server-front/css"/>
+		<delete dir="build/server-front/js"/>
+		<delete dir="build/server-front/html"/>
+		<delete dir="build/server-front/WEB-INF/jsp"/>
+		<delete dir="build/server-front/WEB-INF/tags"/>
+		<copy todir="build/server-front/css">
+			<fileset dir="server-common/web/css"/>
+		</copy>
+		<copy todir="build/server-front/i">
+			<fileset dir="server-common/web/i"/>
+		</copy>
+		<copy todir="build/server-front/js">
+			<fileset dir="server-common/web/js"/>
+		</copy>
+		<copy todir="build/server-front/WEB-INF/tags">
+			<fileset dir="server-common/web/WEB-INF/tags"/>
+		</copy>
+		<copy todir="build/server-front/WEB-INF/jsp/front">
+			<fileset dir="server-common/web/WEB-INF/jsp/front"/>
+		</copy>
+		<copy todir="build/server-front/WEB-INF/jsp/error">
+			<fileset dir="server-common/web/WEB-INF/jsp/error"/>
+		</copy>
+		<copy todir="build/server-front">
+			<fileset dir="server-front/web"/>
+		</copy>
+
+		
+		
+		
+		<!-- appLayout.js -->
+		<echo message="Creating front/app.js..." />
+		
+		<delete file="server-front/web/js/app-dev/appLayout.js"/>
+		
+		<concat destfile="server-front/web/js/app-dev/appLayout.js" 
+			outputencoding="UTF-8" 
+			encoding="UTF-8" 
+			append="false">
+			var LayoutContent = ""
+		</concat>
+		
+		<loadfile property="frontAppContent" encoding="UTF-8" srcfile="server-front/web/js/app-dev/layout.html"/>
+		<for param="line" list="${frontAppContent}" delimiter="${line.separator}">
+			<sequential>
+				<propertyregex 
+					property="escapedLine"
+					input="@{line}"
+					regexp='"'
+					replace="'"
+					override="true"
+					global="true"
+					defaultValue="@{line}"/>
+				<concat destfile="server-front/web/js/app-dev/appLayout.js" 
+					outputencoding="UTF-8" 
+					encoding="UTF-8" 
+					append="true">
+					+"${escapedLine}\n"
+				</concat>
+			</sequential>
+		</for>
+		<concat destfile="server-front/web/js/app-dev/appLayout.js" 
+			outputencoding="UTF-8" 
+			encoding="UTF-8" 
+			append="true">+"";</concat>
+		
+		
+		
+		<!-- global-build-props.txt --> 
+		<delete file="server-front/web/js/app-dev/global-build-props.txt"/>
+		<concat destfile="server-front/web/js/app-dev/global-build-props.txt" 
+			outputencoding="UTF-8" 
+			encoding="UTF-8" 
+			append="false">
+			Global.httpUrl="${front.http.url}";
+			Global.httpsUrl="${front.https.url}";
+		</concat>
+		
+		
+		
+		<!-- app.js -->
+		<delete file="build/server-front/chat/app.js"/>
+		<copy tofile="build/server-front/chat/app.js">
+			<fileset file="server-front/web/js/app-dev/app-begin.txt"/>
+		</copy>
+		<loadfile property="frontAppIncludes" encoding="UTF-8" srcfile="server-front/web/js/app-dev/include.txt"/>
+		<for param="jsFile" list="${frontAppIncludes}" delimiter="${line.separator}">
+			<sequential>
+				<propertyregex 
+					property="cleanedJsFile"
+					input="@{jsFile}"
+					regexp="${front.app.compile.includeStamp}"
+					replace=""
+					override="true"
+					global="true"
+					defaultValue="@{jsFile}"/>
+					
+				<if>
+					<contains string="${cleanedJsFile}" substring="#" />
+					<then>
+						<echo message="Skip: ${cleanedJsFile}" />
+					</then>
+					<else>
+						<echo message="Add: ${cleanedJsFile}" />
+						<var name="filePath" value="server-front/web/js/app-dev/${cleanedJsFile}"/>
+						<concat destfile="build/server-front/chat/app.js" 
+							outputencoding="UTF-8" 
+							encoding="UTF-8" 
+							append="true">
+							<fileset file="${filePath}"/>
+						</concat>
+					</else>
+				</if>
+			</sequential>
+		</for>
+		
+		<!-- clean trash -->
+		<delete file="server-front/web/js/app-dev/global-build-props.txt"/>
+		<delete file="server-front/web/js/app-dev/appLayout.js"/>
+		
+		<!-- compress -->
+		<if>
+			<equals arg1="${front.app.compile.compress}" arg2="true" />
+			<then>
+				<echo message="compress app.js..." />
+					<jscomp 
+						encoding="UTF-8"
+						compilationLevel="simple" 
+						warning="quiet" 
+						debug="false" 
+						output="build/server-front/chat/app.min.js">
+						<sources dir="build/server-front/chat">
+							<file name="app.js"/>
+						</sources>
+					</jscomp>
+					<delete file="build/server-front/chat/app.js"/>
+					<rename src="build/server-front/chat/app.min.js" dest="build/server-front/chat/app.js"/>
+			</then>
+		</if>
+		
+		
+		<!-- labels.js -->
+		<echo message="Creating front/chat/labels.js..." />
+		<delete file="build/server-front/chat/labels.js"/>
+		<copy todir="build/server-front/chat">
+			<fileset file="server-front/web/js/app-dev/chat/labels.js"/>
+		</copy>
+		
+		<!-- app.css -->
+		<echo message="Creating front/css/app.css..." />
+		
+		 
+		<delete file="build/server-front/css/app-def.css"/>
+		
+		<concat destfile="build/server-front/css/app-def.css" append="true" outputencoding="UTF-8" encoding="UTF-8">
+			<filelist dir="server-front/web/css" files="app-base.css,theme-def.css"/>
+		</concat>
+		 
+		<delete file="build/server-front/css/app-gray.css"/>
+		<concat destfile="build/server-front/css/app-gray.css" append="true" outputencoding="UTF-8" encoding="UTF-8">
+			<filelist dir="server-front/web/css" files="app-base.css,theme-gray.css"/>
+		</concat>
+		
+		<delete file="build/server-front/css/app-orange.css"/>
+		<concat destfile="build/server-front/css/app-orange.css" append="true" outputencoding="UTF-8" encoding="UTF-8">
+			<filelist dir="server-front/web/css" files="app-base.css,theme-orange.css"/>
+		</concat>
+		
+		<delete file="build/server-front/css/app-purple.css"/>
+		<concat destfile="build/server-front/css/app-purple.css" append="true" outputencoding="UTF-8" encoding="UTF-8">
+			<filelist dir="server-front/web/css" files="app-base.css,theme-purple.css"/>
+		</concat>
+		
+		
+	</target>
+	
+	<target name="build-server-front" depends="
+		build-server-front-initFiles,
+		build-server-front-initApp">
+		
+		<echo file="build/server-front/build.txt" message="${buildVersion}"/>
+	
+		<jar jarfile="build/server-front.war">
+            <fileset dir="build/server-front"/>
+        </jar>
+		
+	</target>
+	
+	
+	
+	
+<!--
+********************************************************************************************************
+********************************************************************************************************
+********************************************************************************************************
+********************************************************************************************************
+-->
+<!-- CENTRAL SERVER -->
+	
+	<target name="build-central-server">
+	
+		<delete dir="build/central-server-classes"/>
+		<mkdir dir="build/central-server-classes"/>
+		
+		<!-- copy resourses -->
+		<copy todir="build/central-server-classes/">
+			<fileset dir="components/db-common/src" excludes="**/*.java"/>
+			<fileset dir="components/db-main/src" excludes="**/*.java"/>
+		</copy>
+		
+		<!-- copy classes -->
+        <copy todir="build/central-server-classes/">
+            <fileset dir="build/classes/" includes="
+				och/util/**/*,
+				och/api/**/*,
+				och/service/**/*,
+				och/comp/web/**/*,
+				och/comp/cache/**/*,
+				och/comp/mail/**/*,
+				och/comp/db/base/**/*,
+				och/comp/db/main/**/*,
+				com/paypal/**/*,
+				och/comp/paypal/**/*,
+				och/comp/tocheckout/**/*,
+				och/comp/billing/**/*,
+				och/comp/ops/**/*,
+			"/>
+        </copy>
+		
+		<echo file="build/central-server-classes/build.txt" message="${buildVersion}"/>
+		
+		<!-- create dest folder -->
+		<delete dir="build/central-server"/>
+		<mkdir dir="build/central-server"/>
+		<mkdir dir="build/central-server/lib"/>
+		
+		<jar jarfile="build/central-server/lib/central-server.jar">
+            <fileset dir="build/central-server-classes"/>
+        </jar>
+		
+		<copy todir="build/central-server/lib">
+			<fileset file="thirdparty/log4j.jar"/>
+			<fileset file="thirdparty/commons-logging-1.1.1.jar"/>
+			<fileset file="thirdparty/gson-2.2.4.jar"/>
+			<fileset file="thirdparty/postgresql-9.2-1003.jdbc4.jar"/>
+			<fileset file="thirdparty/h2-1.4.177.jar"/>
+			<fileset file="thirdparty/mail-1.5.0-b01.jar"/>
+			<fileset file="thirdparty/mybatis-3.2.2.jar"/>
+			<fileset file="thirdparty/paypal-core-1.5.0.jar"/>
+			<fileset file="thirdparty/paypal-permissions-2.4.109.jar"/>
+			<fileset file="thirdparty/paypal-merchant-2.10.116.jar"/>
+			<fileset file="thirdparty/javax.servlet-api-3.0.1.jar"/>
+		</copy>
+		<copy todir="build/central-server">
+			<fileset dir="components/cache-remote/extra"/>
+		</copy>
+		<copy todir="build/central-server">
+			<fileset file="server-front/web/WEB-INF/paypal.properties"/>
+		</copy>
+		<echo file="build/central-server/build.txt" message="${buildVersion}"/>
+		
+	</target>
+	
+	
+<!--
+********************************************************************************************************
+********************************************************************************************************
+********************************************************************************************************
+********************************************************************************************************
+-->
+<!-- COLLECT SERVERS -->
+
+	<target name="collect-servers">
+		
+		<if>
+			<available file="build/tomcat-init"/>
+			<then></then>
+			<else>
+				<unzip src="thirdparty/tomcat-init.zip" dest="build"></unzip>
+			</else>
+		</if>
+		
+		<mkdir dir="build/_servers"/>
+		
+		
+		<mkdir dir="build/_servers/chat-front-server"/>
+		<if>
+			<available file="build/_servers/chat-front-server/webapps"/>
+			<then>
+				<delete dir="build/_servers/chat-front-server/webapps"/>
+				<mkdir dir="build/_servers/chat-front-server/webapps"/>
+			</then>
+			<else>
+				<copy todir="build/_servers/chat-front-server">
+					<fileset dir="build/tomcat-init" includes="**/*"/>
+				</copy>
+			</else>
+		</if>
+		<copy todir="build/_servers/chat-front-server/webapps" 
+				file="build/server-front.war"/>
+		<move file="build/_servers/chat-front-server/webapps/server-front.war" 
+				tofile="build/_servers/chat-front-server/webapps/ROOT.war"/>
+
+				
+				
+				
+		<mkdir dir="build/_servers/chat-node-server"/>
+		<if>
+			<available file="build/_servers/chat-node-server/webapps"/>
+			<then>
+				<delete dir="build/_servers/chat-node-server/webapps"/>
+				<mkdir dir="build/_servers/chat-node-server/webapps"/>
+			</then>
+			<else>
+				<copy todir="build/_servers/chat-node-server">
+					<fileset dir="build/tomcat-init" includes="**/*"/>
+				</copy>
+			</else>
+		</if>
+		<copy todir="build/_servers/chat-node-server/webapps" 
+				file="build/server-chat.war"/>
+		<move file="build/_servers/chat-node-server/webapps/server-chat.war" 
+				tofile="build/_servers/chat-node-server/webapps/ROOT.war"/>
+		
+		
+		
+		<mkdir dir="build/_servers/chat-central-server"/>
+		<copy todir="build/_servers/chat-central-server">
+			<fileset dir="build/central-server" includes="**/*"/>
+		</copy>
+		
+		
+		<mkdir dir="build/_servers/database-h2-server"/>
+		<copy todir="build/_servers/database-h2-server" file="thirdparty/h2-1.4.177.jar"/>
+		<copy todir="build/_servers/database-h2-server" file="profile/h2-server/run.bat" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/database-h2-server" file="profile/h2-server/run.sh" overwrite="true" failonerror="false"/>
+		
+		<copy todir="build/_servers/" file="profile/run-all.bat" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/" file="profile/run-all.sh" overwrite="true" failonerror="false"/>
+		
+	</target>
+	
+	<target name="servers-conf-DEV">
+		<copy todir="build/_servers/chat-front-server/bin" file="profile/dev-front/setenv.bat" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-front-server/bin" file="profile/dev-front/setenv.sh" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-front-server/bin" file="profile/dev-front/run.bat" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-front-server/conf" file="profile/dev-front/context.xml" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-front-server/conf" file="profile/dev-front/server.xml" overwrite="true" failonerror="false"/>
+		
+		
+		<copy todir="build/_servers/chat-node-server/bin" file="profile/dev-node/setenv.bat" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-node-server/bin" file="profile/dev-node/setenv.sh" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-node-server/bin" file="profile/dev-node/run.bat" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-node-server/conf" file="profile/dev-node/context.xml" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-node-server/conf" file="profile/dev-node/server.xml" overwrite="true" failonerror="false"/>
+	</target>
+	
+	<target name="servers-conf-PROD">
+		<copy todir="build/_servers/chat-front-server/bin" file="profile/prod-front/setenv.bat" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-front-server/bin" file="profile/prod-front/setenv.sh" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-front-server/bin" file="profile/prod-front/run.bat" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-front-server/conf" file="profile/prod-front/context.xml" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-front-server/conf" file="profile/prod-front/server.xml" overwrite="true" failonerror="false"/>
+		
+		<copy todir="build/_servers/chat-node-server/bin" file="profile/prod-node/setenv.bat" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-node-server/bin" file="profile/prod-node/setenv.sh" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-node-server/bin" file="profile/prod-node/run.bat" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-node-server/conf" file="profile/prod-node/context.xml" overwrite="true" failonerror="false"/>
+		<copy todir="build/_servers/chat-node-server/conf" file="profile/prod-node/server.xml" overwrite="true" failonerror="false"/>
+	</target>
+	
+	
+	
+	
+
+
+	
+<!--
+********************************************************************************************************
+********************************************************************************************************
+********************************************************************************************************
+********************************************************************************************************
+-->
+<!-- FINAL -->
+	
+	<target name="build-DEV" depends="
+		init,
+		init-DEV,
+		compile-classes,
+		build-server-chat,
+		war-server-chat,
+		build-server-front,
+		build-central-server">
+	</target>
+	
+	<target name="build-PROD" depends="
+		init,
+		init-PROD,
+		clean-classes,
+		compile-classes,
+		build-server-chat,
+		clean-server-chat-from-dev,
+		war-server-chat,
+		build-server-front,
+		build-central-server">
+	</target>
+	
+	<target name="build-server-DEV" depends="
+		build-DEV,
+		collect-servers,
+		servers-conf-DEV">
+	</target>
+	
+	<target name="build-server-PROD" depends="
+		build-PROD,
+		collect-servers,
+		servers-conf-PROD">
+	</target>
+
+	
+</project>
+

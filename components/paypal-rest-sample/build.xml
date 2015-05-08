@@ -1,0 +1,82 @@
+<project name="paypal-rest-example" default="build" basedir=".">
+
+
+    <target name="init">
+		<property file="build.properties"/>
+        <path id="thirdparty">
+            <fileset dir="../../thirdparty"/>
+        </path>
+    </target>
+
+	
+    <target name="clean-classes">
+        <delete dir="build/classes"/>
+    </target>
+	
+	<target name="compile-classes">
+        
+		<mkdir dir="build/classes"/>
+        <javac
+			   destdir="build/classes"
+               debug="${compiler.debug}"
+               optimize="${compiler.optimize}"
+               deprecation="${compiler.deprecation}"
+			   target="${compiler.target}"
+               encoding="${compiler.encoding}">
+			   
+			<src path="src"/>
+			<src path="../../common/util/src"/>
+            <classpath refid="thirdparty"/>
+        </javac>
+		
+    </target>
+	
+
+	<target name="build-war">
+	
+		<delete dir="build/paypal-rest-example"/>
+		<delete file="build/paypal-rest-example.war"/>
+		<mkdir dir="build/paypal-rest-example"/>
+		
+		
+		<!-- copy web -->
+		<copy todir="build/paypal-rest-example">
+			<fileset dir="web"/>
+		</copy>
+		
+		
+		<!-- copy libs -->
+		<copy todir="build/paypal-rest-example/WEB-INF/lib">
+			<fileset file="../../thirdparty/commons-logging-1.1.1.jar"/>
+			<fileset file="../../thirdparty/gson-2.2.4.jar"/>
+			<fileset file="../../thirdparty/paypal-core-1.5.0.jar"/>
+			<fileset file="../../thirdparty/paypal-rest-0.9.1.jar"/>
+        </copy>
+		
+		<!-- copy resourses -->
+		<copy todir="build/paypal-rest-example/WEB-INF/classes">
+			<fileset dir="src" excludes="**/*.java"/>
+		</copy>
+		
+		<!-- copy classes -->
+        <copy todir="build/paypal-rest-example/WEB-INF/classes/">
+            <fileset dir="build/classes"/>
+        </copy>
+		
+	
+		<jar jarfile="build/paypal-rest-example.war">
+            <fileset dir="build/paypal-rest-example"/>
+        </jar>
+		
+	</target>
+	
+	<target name="build" depends="
+		init,
+		clean-classes,
+		compile-classes,
+		build-war">
+	</target>
+
+	
+</project>
+

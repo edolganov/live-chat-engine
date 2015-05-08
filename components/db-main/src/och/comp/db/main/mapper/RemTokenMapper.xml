@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="och.comp.db.main.mapper.RemTokenMapper">
+	
+	<delete id="deleteOldIfMaxCount" parameterType="map">
+		DELETE FROM rem_tokens
+		WHERE uid in (
+			SELECT a.uid
+			FROM rem_tokens a
+				INNER JOIN (
+					SELECT userId, count(uid) as count
+					FROM rem_tokens GROUP BY userId) AS b 
+				ON a.userId = b.userId
+			WHERE b.count >= #{maxCount} AND a.userId=#{userId}
+			ORDER by a.lastVisited ASC
+			LIMIT #{deleteCount});
+	</delete>
+	
+
+</mapper>

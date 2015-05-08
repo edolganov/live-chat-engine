@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="och.comp.db.main.mapper.h2.H2MainMapper">
+	
+	<select id="createTables">
+		BEGIN;
+		
+		
+		CREATE TABLE servers
+		(
+		  id bigint NOT NULL PRIMARY KEY,
+		  httpUrl varchar(60) NOT NULL UNIQUE,
+		  httpsUrl varchar(60) NOT NULL UNIQUE,
+		  isFull boolean NOT NULL DEFAULT false
+		);
+		CREATE SEQUENCE servers_seq
+                START WITH 1 
+                INCREMENT BY 1;
+                
+        
+		
+		CREATE TABLE tariffs
+		(
+        	id bigint NOT NULL PRIMARY KEY,
+			price numeric(19, 2) NOT NULL,
+			maxOperators int NOT NULL DEFAULT 0,
+			isPublic boolean NOT NULL
+		);
+		CREATE SEQUENCE tariffs_seq
+                START WITH 1 
+                INCREMENT BY 1;
+		
+
+        CREATE TABLE chat_accounts
+        (
+        	id bigint NOT NULL PRIMARY KEY,
+			uid varchar(60) NOT NULL UNIQUE,
+			created timestamp ,
+			name varchar(30),
+        	serverId bigint NOT NULL REFERENCES servers(id),
+			tariffId bigint NOT NULL REFERENCES tariffs(id),
+			tariffStart timestamp  NOT NULL, -- время начала действия текущего тарифа
+			tariffLastPay timestamp  NOT NULL, -- время последней оплаты (используется при месячной оплате и оплате при смене тарифа)
+			tariffChangedInDay int NOT NULL DEFAULT 0, -- количество изменений тарифа за текущий день (нужно для введения ограничений на это кол-во)
+			tariffPrevId bigint, -- значение предыдущего тарифа (используется для паузы акка)
+			feedback_notifyOpsByEmail boolean -- оповещать операторов почтой о новом фидбеке
+        );
+        CREATE SEQUENCE chat_accounts_seq
+                START WITH 1 
+                INCREMENT BY 1;     
+        CREATE INDEX chats_uid_idx ON chat_accounts(uid);
+        
+
+        CREATE TABLE users
+		(
+		  id bigint NOT NULL PRIMARY KEY,
+		  login varchar(30) NOT NULL UNIQUE,
+		  email varchar(60) NOT NULL UNIQUE,
+		  pswHash bytea NOT NULL,
+		  pswSalt varchar(40) NOT NULL,
+		  statusCode int NOT NULL,
+		  activationStateDate timestamp , -- дата начала активации, дата бана
+		  activationCode varchar(40),
+		  cachedRoles varchar(40), -- кеш ролей, собранных из таблицы users_roles
+		  baseOperatorNickname varchar(30), -- базовый никнейм оператора чата (в самих чатах его можно менять на другие)
+		  balance numeric(19, 2) NOT NULL DEFAULT 0, -- текущий баланс юзера
+		  accsBlocked boolean NOT NULL DEFAULT false, -- блокировка всех принадлежащих аккаунтов
+		  startBonusAdded boolean NOT NULL DEFAULT false -- флаг выплаты стартового бонуса юзеру
+		);
+		CREATE INDEX users_login_idx ON users(login);
+		CREATE INDEX users_email_idx ON users(email);
+		CREATE SEQUENCE users_seq
+                START WITH 100 
+                INCREMENT BY 1;
+                
+        
+		-- Системные роли (не касающиеся привилегий в конкретном чате)
+        CREATE TABLE users_roles
+        (
+        	userId bigint NOT NULL REFERENCES users(id),
+        	roleCode int NOT NULL
+        );
+        CREATE UNIQUE INDEX users_roles_idx ON users_roles(userId, roleCode);
+        
+		
+		-- Привилегии юзера в конкретном чате
+        CREATE TABLE chat_account_privileges
+		(
+        	userId bigint NOT NULL REFERENCES users(id),
+        	accId bigint NOT NULL REFERENCES chat_accounts(id),
+			chatPrivileges varchar(40),
+			nickname varchar(60) -- имя юзера в чате
+		);
+		CREATE UNIQUE INDEX chat_account_privileges_idx ON chat_account_privileges(userId, accId);
+		
+		
+		-- Запрос на добавление в юзеры для аккаунта
+        CREATE TABLE chat_account_addreqs
+		(
+        	userId bigint NOT NULL REFERENCES users(id),
+        	accId bigint NOT NULL REFERENCES chat_accounts(id),
+			created timestamp  NOT NULL
+		);
+		CREATE UNIQUE INDEX chat_account_addreqs_idx ON chat_account_addreqs(userId, accId);
+		
+		CREATE TABLE rem_tokens
+		(
+		  uid varchar(40) NOT NULL PRIMARY KEY,
+		  tokenHash bytea NOT NULL,
+		  tokenSalt varchar(40) NOT NULL,
+		  userId bigint NOT NULL REFERENCES users(id),
+		  lastVisited timestamp  NOT NULL
+		);
+        
+		
+		CREATE TABLE payments
+		(
+		  id bigint NOT NULL PRIMARY KEY,
+		  userId bigint NOT NULL REFERENCES users(id),
+		  payProvider int NOT NULL, -- 0 - system, 1 - paypal
+		  payType int NOT NULL, -- тип операции: пополнение, оплата тарифа и т.д. (+ in, -out)
+		  payStatus int NOT NULL, -- 0 - created, 1 - wait, 2 - completed, 3 - error, 4 - returned,
+		  amount numeric(19, 2) NOT NULL,
+		  created timestamp  NOT NULL,
+		  updated timestamp  NOT NULL,
+		  externalId varchar(60), -- внеший идентификатор транзакции
+		  details varchar(2000), -- системные детали оплаты
+		  comment varchar(2000) -- поле для коммента
+		);
+		CREATE INDEX payments_payProvider_payStatus_idx ON payments(payProvider, payStatus);
+		CREATE INDEX payments_payProvider_externalId_idx ON payments(payProvider, externalId);
+		CREATE SEQUENCE payments_seq
+                START WITH 1 
+                INCREMENT BY 1;
+				
+				
+		CREATE TABLE client_hosts
+		(
+			id bigint NOT NULL PRIMARY KEY,
+			name varchar(2000) NOT NULL UNIQUE,
+			important boolean NOT NULL DEFAULT true,
+			created timestamp  NOT NULL
+		);
+		CREATE INDEX client_hosts_host_idx ON client_hosts(name);
+		CREATE SEQUENCE client_hosts_seq
+                START WITH 1 
+                INCREMENT BY 1;
+		
+		-- владелец акка, с которого обращались к хосту
+		CREATE TABLE client_hosts_acc_owners
+		(
+        	userId bigint NOT NULL REFERENCES users(id),
+        	hostId bigint NOT NULL REFERENCES client_hosts(id)
+		);
+		CREATE UNIQUE INDEX client_hosts_acc_owners_idx ON client_hosts_acc_owners(userId, hostId);
+		
+		-- акки, с которых обращались к хосту
+		CREATE TABLE client_hosts_accs
+		(
+        	accId bigint NOT NULL REFERENCES chat_accounts(id),
+        	hostId bigint NOT NULL REFERENCES client_hosts(id)
+		);
+		CREATE UNIQUE INDEX client_hosts_accs_idx ON client_hosts_accs(accId, hostId);
+        
+        
+    	COMMIT;
+	</select>
+	
+	
+	
+
+</mapper>

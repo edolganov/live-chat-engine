@@ -1,2 +1,4 @@
 /bin/
+/build/
 /test-out/
+/test-data/tmp/

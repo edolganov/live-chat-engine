@@ -1,0 +1,110 @@
+
+body {
+	/*background-color: inherit;*/
+	background: url("/i/tile-back.png") repeat scroll 0 0 rgba(0, 0, 0, 0);
+	background-attachment: fixed;
+}
+
+/*
+html {
+	background: url(/i/full-back.png) no-repeat center center fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+*/
+
+#wrapper {
+	position: relative;
+	z-index: 1;
+	background-color: white;
+	max-width: 800px;
+	min-width: 200px;
+	margin: 0px auto;
+	padding: 40px 25px 20px 25px;
+
+	-webkit-box-shadow: 0px 0px 16px 0px rgba(50, 50, 50, 0.64);
+	-moz-box-shadow: 0px 0px 16px 0px rgba(50, 50, 50, 0.64);
+	box-shadow: 0px 0px 16px 0px rgba(50, 50, 50, 0.64);
+}
+
+@media screen and (max-width: 400px) {
+	#wrapper {
+		padding-left: 10;
+		padding-right: 10px;
+	}
+}
+
+
+.feature {
+	margin-top: 5px;
+	border: 1px solid #e1e1e8;
+    padding: 8px;
+	border-radius: 5px;
+}
+
+.featureWrapper {
+	margin-left: 0px;
+}
+
+
+
+
+
+
+
+#mainDesc {
+	background-color: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #fff;
+    padding: 15px 0;
+    text-align: center;
+	border-radius: 5px;
+	font-size: 230%;
+}
+
+#mainDesc p {
+	margin-top: 15px;
+}
+
+#mainBlock {
+	min-height: 600px;
+}
+
+#mainBlockMini {
+	min-height: 200px;
+}
+
+#enterTopBlock {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	z-index: 1;
+}
+
+.promoFeature {
+	background-color: #E1FFE2;
+	border-width: 4px;
+}
+
+
+#shortAboutInfo {
+	font-size: 16px;
+	margin: 15px 20px;
+	margin-top: 20px;
+	padding: 8px;
+}
+
+.featureWrapper .feature {
+	min-height: 170px;
+}
+
+.featureWrapper .promoFeature {
+	min-height: 165px;
+}
+
+.theme-link {
+	margin-left: 10px;
+	margin-top: 10px;
+}

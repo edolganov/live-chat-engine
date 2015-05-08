@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="och.comp.db.main.mapper.ClientHostMapper">
+
+
+    <resultMap id="clientHostMap" type="och.api.model.chat.host.ClientHost">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="important" property="important"/>
+        <result column="created" property="created"/>
+        <collection property="owners" ofType="och.api.model.user.User">
+        	<result column="user_id" property="id"/>
+        	<result column="user_login" property="login"/>
+        </collection>
+    </resultMap>
+    
+
+	<select id="getHostsWithOwners" parameterType="map" resultMap="clientHostMap">
+		SELECT 
+			host.*,
+			usr.id as user_id,
+			usr.login as user_login,
+			countData.ownersCount
+		FROM 
+
+			client_hosts host 
+			LEFT JOIN client_hosts_acc_owners conn ON host.id = conn.hostId
+			LEFT JOIN users usr ON conn.userId = usr.id,
+			
+			-- table2
+			(SELECT host.id,
+				COUNT(conn.userId) ownersCount
+			FROM client_hosts host 
+				LEFT JOIN client_hosts_acc_owners conn ON host.id = conn.hostId
+			WHERE
+				host.important = #{important}
+			GROUP BY host.id
+			) countData
+		WHERE
+			host.important = #{important}
+			AND
+			host.id = countData.id
+			AND
+			ownersCount >= #{minOwnersCount}
+		ORDER BY name;
+
+	</select>
+	
+
+</mapper>
