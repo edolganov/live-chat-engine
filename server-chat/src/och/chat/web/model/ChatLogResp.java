@@ -73,7 +73,7 @@ public class ChatLogResp {
 	}
 
 	/**
-	 * �?меются ли обновления в текущих данных
+	 * Имеются ли обновления в текущих данных
 	 */
 	public boolean hasUpdates() {
 		return ! isEmpty(messages) || TRUE.equals(hasNewOperators);
