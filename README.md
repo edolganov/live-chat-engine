@@ -55,7 +55,10 @@ Storage for chats accounts.
 ## Demployment
 ### Simple deployment scheme
 Only one instance of front and node servers:
+
 ![deploy-scheme-simple](https://raw.githubusercontent.com/edolganov/live-chat-engine/master/extra/images/deploy-scheme-simple.png)
 
 ### Production deployment scheme
 Load balancer (for example: nginx) for multi front instances, new storages for new accounts:
+
+![deploy-scheme-prod](https://raw.githubusercontent.com/edolganov/live-chat-engine/master/extra/images/deploy-scheme-prod.png)
