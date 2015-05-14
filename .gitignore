@@ -2,3 +2,6 @@
 /build/
 /test-out/
 /test-data/tmp/
+/create-links.bat
+/build-dev-war-redeploy.bat
+/build-front-app.bat
