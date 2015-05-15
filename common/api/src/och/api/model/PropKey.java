@@ -246,6 +246,7 @@ public enum PropKey implements KeyWithDef {
 	
 	
 	//paypal
+	paypal_enabled(false),
 	paypal_key("paypal"),
 	paypal_clientStub(false),
 	paypal_configPath,

@@ -271,6 +271,7 @@ public class FrontApp extends BaseApp {
 		Captcha captcha = new Captcha(props);
 		
 		if(mails == null) mails = new MailService(props);
+		if(paypalClient == null && ! props.getBoolVal(paypal_enabled)) paypalClient = new PaypalClientStub();
 		if(paypalClient == null) paypalClient = props.getBoolVal(paypal_clientStub) ? 
 				new PaypalClientStub() : PaypalSoapClient.create(props);
 				

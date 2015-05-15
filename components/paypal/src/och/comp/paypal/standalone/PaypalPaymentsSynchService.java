@@ -48,6 +48,7 @@ import och.comp.db.main.table.billing.UpdatePaymentById;
 import och.comp.db.main.table.billing.UpdateUserAccsBlocked;
 import och.comp.mail.MailService;
 import och.comp.paypal.PaypalClient;
+import och.comp.paypal.PaypalClientStub;
 import och.comp.paypal.PaypalSoapClient;
 import och.service.props.Props;
 import och.service.props.impl.FileProps;
@@ -96,8 +97,12 @@ public class PaypalPaymentsSynchService implements HasInitState, CacheServerCont
 		checkStateForEmpty(universal, "universal");
 		
 		if(client == null){
-			Props connectProps = FileProps.createPropsWithoutUpdate(new File(props.findVal(paypal_configPath)));
-			client = new PaypalSoapClient(props, connectProps);
+			if(props.getBoolVal(paypal_enabled)){
+				Props connectProps = FileProps.createPropsWithoutUpdate(new File(props.findVal(paypal_configPath)));
+				client = new PaypalSoapClient(props, connectProps);				
+			} else {
+				client = new PaypalClientStub();
+			}
 		}
 		
 		//skip timers

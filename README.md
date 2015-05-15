@@ -11,7 +11,8 @@ Contains server-side (chats storing, users and billing management), operators ca
 ![Operators Cabinet](https://raw.githubusercontent.com/edolganov/live-chat-engine/master/extra/images/live-chat-cabinet.png)
 
 ## Two work modes 
-### Software as a Service
+
+### Software as a Service (SaaS mode)
 
 In [SaaS mode](https://en.wikipedia.org/wiki/Software_as_a_service) clients create accounts for themselves and pay monthly bills.
 This mode is ready for production usage. 
@@ -36,21 +37,63 @@ In Tool Mode admin creates accounts, user can be only a operator, no monthly bil
 - start **build.bat** (win) or **build.sh** (linux)
 - on BUILD SUCCESSFUL message see **/build/_servers** dir
 - copy all files from **/build/_servers** to your work dir
-- run components by **run-all.bat** or **run-all.sh**
+- run all components by single runner: **run-all.bat** (win) or **run-all.sh** (linux)
+- open browser with url [127.0.0.1:10280](http://127.0.0.1:10280/) for access to index page
+- sign in to cabinet with **admin** / **admin** login and password
 
 ## Engine components
 
 ### database-h2-server
 Included database server by default. Use for tests. For production use PostgreSQL.
 
+Run by /run.bat (run.sh).
+
+By default H2 creates **~/livechat** db file.
+
+----------
+
 ### chat-central-server
 Server for caches and synchronization.
 
+Run by /run.bat (run.sh).
+
+Configs and logs:
+
+- /config.properties - configs for central server
+- /net-props/* - common configs for all servers
+- /server.log - logs
+
+
+----------
+
 ### chat-front-server
 Web server for site and operators online cabinet. 
+Powered by [Tomcat 7 Web Server](http://tomcat.apache.org/). 
+
+Run by /bin/run.bat (run.sh).
+
+
+Configs and logs:
+
+- /conf - web server conf ([see Tomcat docs](http://tomcat.apache.org/tomcat-7.0-doc/introduction.html))
+- /webapps/ROOT/WEB-INF/front.properties - special front app configs
+- /logs/catalina.log - logs
+
+
+----------
 
 ### chat-node-server
 Storage for chats accounts.
+Powered by [Tomcat 7 Web Server](http://tomcat.apache.org/).  
+
+Run by /bin/run.bat (run.sh).
+
+Configs and logs:
+
+- /conf - web server conf ([see Tomcat docs](http://tomcat.apache.org/tomcat-7.0-doc/introduction.html))
+- /webapps/ROOT/WEB-INF/chat.properties - special node app configs
+- /logs/catalina.log - logs
+- /data/accounts - created chat accounts
 
 ## Demployment
 ### Simple deployment scheme
