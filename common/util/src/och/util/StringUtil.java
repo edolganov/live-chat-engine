@@ -198,5 +198,11 @@ public class StringUtil {
 		}
 		return out;
 	}
+	
+	/** removes all whitespaces and non visible characters such as tab, \n */
+	public static String removeSpaceSeparators(String s){
+		if(s == null) return s;
+		return s.replaceAll("\\s+","");
+	}
 
 }
