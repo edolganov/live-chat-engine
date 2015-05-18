@@ -5,3 +5,4 @@
 /create-links.bat
 /build-dev-war-redeploy.bat
 /build-front-app.bat
+/build-conf/build-props.bat
