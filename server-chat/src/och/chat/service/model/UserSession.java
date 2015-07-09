@@ -48,7 +48,7 @@ public class UserSession implements Cloneable {
 	public Map<String, Set<PrivilegeType>> clonePrivsByAcc(){
 		
 		if(isEmpty(privsByAcc)) return emptyMap();
-		HashMap<String, Set<PrivilegeType>> out = new HashMap<>();
+		Map<String, Set<PrivilegeType>> out = new HashMap<>();
 		for (Entry<String, Set<PrivilegeType>> entry : privsByAcc.entrySet()) {
 			out.put(entry.getKey(), new HashSet<>(entry.getValue()));
 		}
