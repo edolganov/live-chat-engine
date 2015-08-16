@@ -15,16 +15,21 @@ Contains server-side (chats storing, users and billing management), operators ca
 ### Software as a Service (SaaS mode)
 
 In [SaaS mode](https://en.wikipedia.org/wiki/Software_as_a_service) clients create accounts for themselves and pay monthly bills.
-This mode is ready for production usage. 
+This mode is ready for production usage and enabled by default. 
 
 Example of implementation: [cheapchat.me](http://cheapchat.me)
 
 Other popular examples: [olark](https://www.olark.com/), [livezilla](http://www.livezilla.net/), [boldchat](https://www.boldchat.com/) and others
 
 ### Tool for Other System (Tool mode)
-In Tool Mode admin creates accounts, user can be only a operator, no monthly bills. You can use Tool Mode for live chats for single site with own hosting for example.
+In Tool Mode admin creates accounts, user can be only a operator, no monthly bills. You can use Tool Mode for single site with own hosting for example. 
 
-**Tool mode is not completed yet! Implementation is in progress...**
+To enable this mode change:
+
+- before build open file /components/cache-remote/extra/net-props/common.properties
+- or after build open file /build/_servers/chat-central-server/net-props/common.properties
+- change prop 'toolMode' to true
+
 
 ## Requirements
 - Java 8
