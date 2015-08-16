@@ -8,6 +8,7 @@
 <%@ taglib tagdir="/WEB-INF/tags/utils" prefix="utils" %>
 
 
+<utils:propToJs key="<%= PropKey.toolMode %>"/>
 <utils:propToJs key="<%= PropKey.frontApp_cabinet_useHttpUrlsForChats %>"/>
 <utils:propToJs key="<%= PropKey.chats_maxMsgSize %>"/>
 <utils:propToJs key="payConfirmVal" customVal="${payConfirmVal}"/>

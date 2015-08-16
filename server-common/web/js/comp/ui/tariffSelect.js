@@ -19,13 +19,16 @@ function TariffSelect(parent){
 			ui.tariff.append(opt);
 		});
 		
-		if(tariffs.length == 1){
+		if(tariffs.length == 1 || Props["toolMode"] == 'true'){
 			ui.tariff.disable();
 		}
 
 		ui.tariff.change(onTariffChanged);
 		ui.tariff.change();
 		
+		if(Props["toolMode"] == 'true'){
+			ui.root.setVisible(false);
+		}
 		parent.append(ui.root);
 
 	}

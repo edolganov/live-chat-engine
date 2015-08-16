@@ -222,6 +222,7 @@ public class BillingSyncService implements HasInitState, CacheServerContextHolde
 		Date now = nowPreset != null? nowPreset : new Date();
 		
 		if(props.getBoolVal(billing_sync_debug_DisableSync)) return -1;
+		if(props.getBoolVal(toolMode)) return -1;
 		
 		//проверка актуальности старта
 		if(checkWorkTime && props.getBoolVal(billing_sync_debug_CheckWorkTime)){

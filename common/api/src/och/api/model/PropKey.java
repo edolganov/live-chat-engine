@@ -25,6 +25,8 @@ import och.service.props.KeyWithDef;
 
 public enum PropKey implements KeyWithDef {
 	
+	//SaaS mode or Tool mode
+	toolMode(false),
 	
 	//admin
 	admin_Emails,
@@ -199,7 +201,7 @@ public enum PropKey implements KeyWithDef {
 	chats_hosts_multiOwnersAlarmDelay(1000L*60*4),
 	chats_hosts_multiOwnersAlarmDelta(1000L*60*60*24),
 	chats_hosts_multiOwnersAlarmVal(2),
-	chats_hosts_multiOwners_DisableSendErrors(false),
+	chats_hosts_multiOwners_DisableSendErrors(true),
 	
 	//users
 	users_init_adminLogins("admin,root"),

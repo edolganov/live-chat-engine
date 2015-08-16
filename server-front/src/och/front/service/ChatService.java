@@ -495,6 +495,10 @@ public class ChatService extends BaseFrontService {
 	@Secured
 	public String createAccByUser(String name, Long tariffId) throws NoAvailableServerException, UserNotFoundException, Exception{
 		
+		if(props.getBoolVal(toolMode)){
+			checkAccessFor_ADMIN();
+		}
+		
 		long userId = findUserIdFromSecurityContext();		
 		checkUserAccsForBlocked();
 		
@@ -851,7 +855,8 @@ public class ChatService extends BaseFrontService {
 		int maxOperators = newTariff.maxOperators;
 		if(maxOperators > 0){
 			Map<Long, UserAccInfo> curOperators = m.getAccOperators(accUid);
-			if(curOperators.size() > maxOperators) throw new UpdateTariffOperatorsLimitException();
+			if( ! props.getBoolVal(toolMode) 
+					&& curOperators.size() > maxOperators) throw new UpdateTariffOperatorsLimitException();
 		}
 
 		Date now = ops.nowPreset == null? new Date() : ops.nowPreset;
@@ -865,7 +870,7 @@ public class ChatService extends BaseFrontService {
 			if(ops.checkMaxChangedInDay){
 				changedInDay = acc.tariffChangedInDay + 1;
 				Integer maxChanges = props.getIntVal(tariffs_maxChangedInDay);
-				if(maxChanges > 0 && changedInDay > maxChanges)
+				if( ! props.getBoolVal(toolMode) && maxChanges > 0 && changedInDay > maxChanges)
 					throw new ChangeTariffLimitException();
 			} else {
 				changedInDay = acc.tariffChangedInDay;
@@ -1018,7 +1023,7 @@ public class ChatService extends BaseFrontService {
 		
 		
 		//check max operator limit if need
-		if(privsSet.contains(CHAT_OPERATOR)){
+		if( ! props.getBoolVal(toolMode) && privsSet.contains(CHAT_OPERATOR)){
 			
 			checkAccForPaused(accUid);
 			

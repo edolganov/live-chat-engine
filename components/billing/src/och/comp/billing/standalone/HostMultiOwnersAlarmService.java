@@ -64,6 +64,8 @@ public class HostMultiOwnersAlarmService implements HasInitState, CacheServerCon
 	
 	public void doCheckWork() throws Exception {
 		
+		if(props.getBoolVal(toolMode)) return;
+		
 		boolean important = true;
 		Integer minVal = props.getIntVal(chats_hosts_multiOwnersAlarmVal);
 		List<ClientHost> hosts = mainDb.clientHosts.getHostsWithOwners(important, minVal);

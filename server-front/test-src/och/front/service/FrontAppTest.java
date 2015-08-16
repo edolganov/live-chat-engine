@@ -546,7 +546,8 @@ public class FrontAppTest extends BaseTest {
 		}finally {
 			popUserFromSecurityContext();
 		}
-			
+		
+		props.putVal(chats_hosts_multiOwners_DisableSendErrors, false);
 		MailServiceStub mailService = new MailServiceStub(mailSender, props);
 		mailSender.tasks.clear();
 		

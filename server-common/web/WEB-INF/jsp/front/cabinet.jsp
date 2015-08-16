@@ -12,6 +12,7 @@
 <%@ taglib tagdir="/WEB-INF/tags/front/tmpl/cabinet" prefix="tmpl_cabinet" %>
 
 <utils:setupRoles/>
+<utils:prop var="toolMode" key="<%= PropKey.toolMode %>"/>
 
 
 <layout:base>
@@ -97,7 +98,7 @@
 							</a>
 							
 						</li>
-						<c:if test="${isOwnerOfAnyAcc}">
+						<c:if test="${isOwnerOfAnyAcc && toolMode != 'true'}">
 							<li bind="billing">
 								<a href="javascript:">${i18n.label('cabinet.tab.billing')}</a>
 							</li>
@@ -105,9 +106,11 @@
 						<li bind="profile">
 							<a href="javascript:">${i18n.label('cabinet.tab.userSettings')}</a>
 						</li>
-						<li bind="createAcc">
-							<a href="javascript:">${i18n.label('cabinet.tab.addAcc')}</a>
-						</li>
+						<c:if test="${toolMode != 'true' || Role_ADMIN}">
+							<li bind="createAcc">
+								<a href="javascript:">${i18n.label('cabinet.tab.addAcc')}</a>
+							</li>
+						</c:if>
 						<li bind="addReqs">
 							<a href="javascript:">${i18n.label('cabinet.tab.addUser')}</a>
 						</li>
@@ -119,9 +122,11 @@
 					</c:when>
 					<%-- Приветственный экран --%>
 					<c:otherwise>
-						<li bind="createAcc">
-							<a href="javascript:">${i18n.label('cabinet.tab.createAcc')}</a>
-						</li>
+						<c:if test="${toolMode != 'true'}">
+							<li bind="createAcc">
+								<a href="javascript:">${i18n.label('cabinet.tab.createAcc')}</a>
+							</li>
+						</c:if>
 						<li bind="addReqs">
 							<a href="javascript:">${i18n.label('cabinet.tab.addUser')}</a>
 						</li>

@@ -37,7 +37,7 @@ function AccInfoController(acc){
 		}
 
 		//tariff
-		if( ! security.isAccOwnerOrModer(accId)){
+		if( Props["toolMode"] == 'true' || ! security.isAccOwnerOrModer(accId)){
 			ui.tariffBlock.hide();
 		} else {
 			initTariffInfo();
